@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+# Give the workflow the permissions it needs to push gh-pages
+permissions:
+  contents: write
+  pages: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
