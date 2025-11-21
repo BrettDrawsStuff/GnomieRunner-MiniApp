@@ -17,8 +17,15 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install deps
-        run: npm ci
+      - name: Use npm install if no lockfile, otherwise npm ci
+        run: |
+          if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then
+            echo "Lockfile found. Running npm ci"
+            npm ci --prefer-offline --no-audit --no-fund
+          else
+            echo "No lockfile found. Running npm install"
+            npm install --no-audit --no-fund
+          fi
 
       - name: Build
         run: npm run build
