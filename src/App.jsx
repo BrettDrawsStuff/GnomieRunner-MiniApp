@@ -3,13 +3,10 @@ import { sdk } from "@farcaster/miniapp-sdk";
 import { ethers } from "ethers";
 
 /**
- * Minimal App for debugging build / upload issues.
- * - Calls sdk.actions.ready()
- * - Allows connecting the host wallet and shows address
- * - Keeps UI tiny so we can isolate the failure
+ * Minimal App (updated for ethers v6)
  *
- * If this file commits and builds successfully, we know the failure was in the earlier
- * (larger) App.jsx content (likely a syntax/JSON/ABI issue).
+ * Uses ethers v6 BrowserProvider instead of the v5 `ethers.providers.Web3Provider`.
+ * This avoids Rollup trying to import a non-existent `providers` named export.
  */
 
 export default function App() {
@@ -34,8 +31,9 @@ export default function App() {
     setStatus("Connecting wallet...");
     try {
       const ethProvider = await sdk.wallet.getEthereumProvider();
-      const provider = new ethers.providers.Web3Provider(ethProvider);
-      const signer = provider.getSigner();
+      // ethers v6: use BrowserProvider to wrap an EIP-1193 provider
+      const provider = new ethers.BrowserProvider(ethProvider);
+      const signer = await provider.getSigner();
       const addr = await signer.getAddress();
       setAddress(addr);
       setStatus("Connected");
